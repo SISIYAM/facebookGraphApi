@@ -1,8 +1,39 @@
-# React + Vite
+# Facebook Graph API Conversations
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Facebook Graph API - CRUD Operation in Facebook Page Conversation from Web
+
+## Author
+
+MD Saymum Islam Siyam (CodeSQL)
+
+## Contact
+
+- Email: [si31siyam@gmail.com](mailto:si31siyam@gmail.com)
+- Portfolio: [siyam70.netlify.app](https://siyam70.netlify.app/)
+- Facebook: [Saymum Islam Siyam](https://www.facebook.com/SaymumIslamSiyam70/)
+
+## Date
+
+21/09/24
+
+## Installation
+
+To get started, clone the repository and install the necessary dependencies:
+
+```bash
+git clone https://github.com/SISIYAM/facebookGraphApi.git
+cd facebookGraphApi
+npm install
+```
+
+## Environment Variables
+
+Create a `.env` file in the root directory and add the following:
+
+```bash
+VITE_PAGE_ACCESS_TOKEN=your_page_access_token
+```
