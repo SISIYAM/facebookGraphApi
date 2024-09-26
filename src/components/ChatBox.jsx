@@ -78,6 +78,7 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
       const payload = {
         recipient: { id: recipientId },
         message: { text: newMessage },
+        tag: "CONFIRMED_EVENT_UPDATE",
       };
 
       const response = await axios.post(apiUrl, payload);
