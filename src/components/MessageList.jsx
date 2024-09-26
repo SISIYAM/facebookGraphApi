@@ -14,7 +14,17 @@ const MessageList = ({ messages, pageId }) => {
               msg.senderId === pageId ? "outgoing" : "incomming"
             }`}
           >
-            <div className="bubble">{msg.text}</div>
+            {msg.text && <div className="bubble">{msg.text}</div>}
+            {/* Display image if available */}
+            {msg.imageUrl && (
+              <div className="bubble image-bubble">
+                <img
+                  src={msg.imageUrl}
+                  alt="Sent attachment"
+                  className="message-image"
+                />
+              </div>
+            )}
           </div>
         ))
       ) : (

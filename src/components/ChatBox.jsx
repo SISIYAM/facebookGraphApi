@@ -14,16 +14,25 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
   const fetchMessages = async (nextPageUrl = null) => {
     const apiUrl =
       nextPageUrl ||
-      `https://graph.facebook.com/v20.0/${conversationId}/messages?fields=message,from&access_token=${pageAccessToken}`;
+      `https://graph.facebook.com/v20.0/${conversationId}/messages?fields=message,from,attachments&access_token=${pageAccessToken}`;
 
     try {
       const response = await axios.get(apiUrl);
-      const fetchedMessages = response.data.data.map((msg) => ({
-        senderId: msg.from.id,
-        senderName: msg.from.name || "Unknown",
-        text: msg.message || "[No message content]",
-      }));
+      const fetchedMessages = response.data.data.map((msg) => {
+        const isImageAttachment =
+          msg.attachments?.data?.[0]?.mime_type == "image/jpeg";
+        const imageUrl = isImageAttachment
+          ? msg.attachments.data[0].image_data.url
+          : null;
+        return {
+          senderId: msg.from.id,
+          senderName: msg.from.name || "Unknown",
+          text: msg.message || null,
+          imageUrl: imageUrl || null,
+        };
+      });
 
+      console.log(fetchedMessages);
       setMessages((prev) =>
         nextPageUrl ? [...prev, ...fetchedMessages] : fetchedMessages
       );
