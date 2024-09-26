@@ -32,7 +32,6 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
         };
       });
 
-      console.log(fetchedMessages);
       setMessages((prev) =>
         nextPageUrl ? [...prev, ...fetchedMessages] : fetchedMessages
       );
