@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import MessageList from "./MessageList";
 import LoadingBtn from "./LoadingBtn";
@@ -9,6 +9,9 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
   const [fetchTrigger, setFetchTrigger] = useState(0);
   const [sending, setSending] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  // ref for the file input
+  const fileInputRef = useRef(null);
 
   const pageAccessToken = import.meta.env.VITE_PAGE_ACCESS_TOKEN;
   // fetch all messages in a conversation
@@ -112,6 +115,11 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
           },
         ]);
         setSelectedImage(null);
+
+        // clear the file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       } else {
         // otherwise, send the text message
         payload = {
@@ -173,11 +181,14 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
             </button>
           )}
         </div>
-        <input
-          type="file"
-          onChange={(e) => setSelectedImage(e.target.files[0])}
-          accept="image/*"
-        />
+        <div className="m-3">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={(e) => setSelectedImage(e.target.files[0])}
+            accept="image/*"
+          />
+        </div>
       </div>
     </>
   );
