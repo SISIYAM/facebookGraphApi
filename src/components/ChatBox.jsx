@@ -8,6 +8,7 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
   const [newMessage, setNewMessage] = useState("");
   const [fetchTrigger, setFetchTrigger] = useState(0);
   const [sending, setSending] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const pageAccessToken = import.meta.env.VITE_PAGE_ACCESS_TOKEN;
   // fetch all messages in a conversation
@@ -71,8 +72,9 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
 
   // send a message
   const sendMessage = async () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() && !selectedImage) return; // Ensure there is a message or image to send
     setSending(true);
+
     try {
       const apiUrl = `https://graph.facebook.com/v20.0/me/messages?access_token=${pageAccessToken}`;
       const recipientId = await getRecipientId(conversationId);
@@ -83,14 +85,42 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
         return;
       }
 
-      const payload = {
-        recipient: { id: recipientId },
-        message: { text: newMessage },
-        tag: "CONFIRMED_EVENT_UPDATE",
-      };
+      let payload;
+      if (selectedImage) {
+        // if an image is selected, send it
+        const formData = new FormData();
+        formData.append("recipient", JSON.stringify({ id: recipientId }));
+        formData.append(
+          "message",
+          JSON.stringify({
+            attachment: { type: "image", payload: { is_reusable: true } },
+          })
+        );
+        formData.append("filedata", selectedImage);
 
-      const response = await axios.post(apiUrl, payload);
-      if (response.status === 200) {
+        await axios.post(apiUrl, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        setMessages((prev) => [
+          ...prev,
+          {
+            senderId: pageId,
+            senderName: "You",
+            imageUrl: URL.createObjectURL(selectedImage),
+          },
+        ]);
+        setSelectedImage(null);
+      } else {
+        // otherwise, send the text message
+        payload = {
+          recipient: { id: recipientId },
+          message: { text: newMessage },
+          tag: "CONFIRMED_EVENT_UPDATE",
+        };
+
+        await axios.post(apiUrl, payload);
         setMessages((prev) => [
           ...prev,
           {
@@ -100,9 +130,10 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
           },
         ]);
         setNewMessage("");
-        // rerender messages after sending
-        fetchMessages();
       }
+
+      // refresh the messages
+      fetchMessages();
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
@@ -142,6 +173,11 @@ const ChatBox = ({ conversationId, userName, pageId, onBack }) => {
             </button>
           )}
         </div>
+        <input
+          type="file"
+          onChange={(e) => setSelectedImage(e.target.files[0])}
+          accept="image/*"
+        />
       </div>
     </>
   );
